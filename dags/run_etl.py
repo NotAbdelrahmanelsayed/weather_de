@@ -1,26 +1,39 @@
 from airflow import DAG
 from datetime import datetime
 from airflow.operators.bash import BashOperator
+from airflow.providers.docker.operators.docker import DockerOperator
+
 
 with DAG(
     dag_id="Weather_etl",
     start_date=datetime(year=2025, month=2, day=18),
     schedule="@hourly",
-    catchup=True,
+    catchup=False,
     max_active_runs=1,
-    render_template_as_native_obj=True
+    render_template_as_native_obj=True,
 ) as dag:
-    extract = BashOperator(
-        dag=dag,
+    extract_task = DockerOperator(
         task_id="extract",
-        bash_command="weather_etl-extract")
-    transform = BashOperator(
-        dag=dag,
+        image="app",  
+        command="python weather_etl/extract.py",
+        docker_url="unix://var/run/docker.sock",  # Ensure Airflow can communicate with Docker daemon
+        network_mode="bridge",
+    )
+
+    transform_task = DockerOperator(
         task_id="transform",
-        bash_command="weather_etl-transform")
-    load = BashOperator(
-        dag=dag,
+        image="app",
+        command="python weather_etl/transform.py",
+        docker_url="unix://var/run/docker.sock",
+        network_mode="bridge",
+    )
+
+    load_task = DockerOperator(
         task_id="load",
-        bash_command="weather_etl-load")
-    
-    extract >> transform >> load
+        image="app",
+        command="python weather_etl/load.py",
+        docker_url="unix://var/run/docker.sock",
+        network_mode="bridge",
+    )
+
+    extract_task >> transform_task >> load_task

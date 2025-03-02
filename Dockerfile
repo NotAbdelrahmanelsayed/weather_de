@@ -1,13 +1,11 @@
 # Use a lightweight Python image
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 # Set the working directory
 WORKDIR /usr/local/app
 
 # Copy dependencies file
 COPY requirements.txt ./
-
-# Install dependencies as root
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code

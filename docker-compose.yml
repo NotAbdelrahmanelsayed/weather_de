@@ -147,15 +147,12 @@ services:
       - airflow
   
   app:
-    image: python:3.10-slim
-    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
-      - ./weather_etl:/app/weather_etl/
-      - ./data:/app/data/
-      - ./configuration.conf:/app/configuration.conf
-      - ./setup.py:/app/setup.py
-    command:
-        sh -c "pip install -e . && tail -f /dev/null"
-
+      - ./weather_etl:/usr/local/app/weather_etl
+      - ./data:/usr/local/app/data
+      - ./configuration.conf:/usr/local/app/configuration.conf
 volumes:
   postgres-db-volume:

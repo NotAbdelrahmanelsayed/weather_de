@@ -2,7 +2,7 @@ import configparser
 from pathlib import Path
 
 parser = configparser.ConfigParser()
-config_path = Path("/home/bedo7/weather_de/configuration.conf")
+config_path = Path("configuration.conf")
 def read_config(parser, config_path=config_path):
     parser.read(config_path)
     return parser

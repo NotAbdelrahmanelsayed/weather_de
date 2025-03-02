@@ -20,6 +20,3 @@ USER app
 
 # Expose port 5000 for API or web service
 EXPOSE 5000
-
-# Run the ETL script
-CMD [ "python", "weather_etl/extract.py" ]

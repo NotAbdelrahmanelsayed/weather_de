@@ -55,6 +55,9 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 
   airflow-scheduler:
     <<: *airflow-common
@@ -70,6 +73,9 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 
   airflow-init:
     <<: *airflow-common
@@ -133,6 +139,8 @@ services:
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
+      - /var/run/docker.sock:/var/run/docker.sock
+
 
   airflow-cli:
     <<: *airflow-common

@@ -3,6 +3,11 @@ from datetime import datetime
 from airflow.operators.bash import BashOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 from docker.types import Mount
+from configparser import ConfigParser
+
+config = ConfigParser()
+config.read("/usr/local/app/configuration.conf")
+host_dir = config.get('host_dir', 'path')
 
 with DAG(
     dag_id="Weather_etl",
@@ -20,12 +25,12 @@ with DAG(
         network_mode="weather_de_default",
         mounts=[
             Mount(
-                source="/home/bedo7/weather_de/data",  # absolute path on the host
+                source=f"{host_dir}/data",
                 target="/usr/local/app/data",          # path in container
                 type="bind",
             ),
             Mount(
-            source="/home/bedo7/weather_de/configuration.conf",
+            source=f"{host_dir}/configuration.conf",
             target="/usr/local/app/configuration.conf",
             type="bind",
             ),
@@ -40,8 +45,8 @@ with DAG(
         docker_url="unix://var/run/docker.sock",
         mounts=[
             Mount(
-                source="/home/bedo7/weather_de/data",  # absolute path on the host
-                target="/usr/local/app/data",          # path in container
+                source=f"{host_dir}/data",
+                target="/usr/local/app/data",         
                 type="bind",
             ),
         ],
@@ -56,12 +61,12 @@ with DAG(
         network_mode="weather_de_default",
         mounts=[
             Mount(
-                source="/home/bedo7/weather_de/data",  # absolute path on the host
-                target="/usr/local/app/data",          # path in container
+                source=f"{host_dir}/data",
+                target="/usr/local/app/data",         
                 type="bind",
             ),
             Mount(
-            source="/home/bedo7/weather_de/configuration.conf",
+            source=f"{host_dir}/configuration.conf",
             target="/usr/local/app/configuration.conf",
             type="bind",
             ),

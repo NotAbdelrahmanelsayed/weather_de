@@ -24,6 +24,11 @@ with DAG(
                 target="/usr/local/app/data",          # path in container
                 type="bind",
             ),
+            Mount(
+            source="/home/bedo7/weather_de/configuration.conf",
+            target="/usr/local/app/configuration.conf",
+            type="bind",
+            ),
         ],
         force_pull=False,
     )
@@ -49,6 +54,18 @@ with DAG(
         command="python weather_etl/load.py",
         docker_url="unix://var/run/docker.sock",
         network_mode="weather_de_default",
+        mounts=[
+            Mount(
+                source="/home/bedo7/weather_de/data",  # absolute path on the host
+                target="/usr/local/app/data",          # path in container
+                type="bind",
+            ),
+            Mount(
+            source="/home/bedo7/weather_de/configuration.conf",
+            target="/usr/local/app/configuration.conf",
+            type="bind",
+            ),
+        ],
     )
 
     extract_task >> transform_task >> load_task

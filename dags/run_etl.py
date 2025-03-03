@@ -14,15 +14,16 @@ with DAG(
 ) as dag:
     extract_task = DockerOperator(
         task_id="extract",
-        image="app",  
+        image="weather_de-app:latest",  
         command="python weather_etl/extract.py",
         docker_url="unix://var/run/docker.sock",  # Ensure Airflow can communicate with Docker daemon
         network_mode="bridge",
+        force_pull=False,
     )
 
     transform_task = DockerOperator(
         task_id="transform",
-        image="app",
+        image="weather_de-app:latest",
         command="python weather_etl/transform.py",
         docker_url="unix://var/run/docker.sock",
         network_mode="bridge",
@@ -30,7 +31,7 @@ with DAG(
 
     load_task = DockerOperator(
         task_id="load",
-        image="app",
+        image="weather_de-app:latest",
         command="python weather_etl/load.py",
         docker_url="unix://var/run/docker.sock",
         network_mode="bridge",

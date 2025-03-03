@@ -1,22 +1,17 @@
-# Use a lightweight Python image
 FROM python:3.10-slim
 
-# Set the working directory
+# Install system packages required to build psycopg2
+RUN apt-get update && apt-get install -y \
+    libpq-dev gcc
+
 WORKDIR /usr/local/app
 
-# Copy dependencies file
-COPY requirements.txt ./
+# Copy + install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application source code
-COPY weather_etl ./weather_etl
+# Copy the rest of your project
+COPY . .
 
-# Set proper permissions for the app user
-RUN groupadd -r app && useradd --no-log-init -r -g app app && \
-    chown -R app:app /usr/local/app
-
-# Switch to non-root user
-USER app
-
-# Expose port 5000 for API or web service
-EXPOSE 5000
+# Install your package
+RUN pip install --no-cache-dir -e .

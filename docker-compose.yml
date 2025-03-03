@@ -162,13 +162,15 @@ services:
       - airflow 
    
   app: 
+    image: weather_de-app:latest
     build: 
       context: . 
       dockerfile: Dockerfile 
     volumes: 
-      - ./weather_etl:/usr/local/app/weather_etl 
-      - ./data:/usr/local/app/data 
-      - ./configuration.conf:/usr/local/app/configuration.conf 
+      - ./weather_etl:/usr/local/app/weather_etl
+      - ./data:/usr/local/app/data
+      - ./configuration.conf:/usr/local/app/configuration.conf
+
  
 volumes: 
   postgres-db-volume:

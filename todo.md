@@ -1,0 +1,1 @@
+[ ] in run_etl.py there is absolute path defined solve it with conf

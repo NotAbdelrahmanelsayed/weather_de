@@ -2,7 +2,7 @@ from airflow import DAG
 from datetime import datetime
 from airflow.operators.bash import BashOperator
 from airflow.providers.docker.operators.docker import DockerOperator
-
+from docker.types import Mount
 
 with DAG(
     dag_id="Weather_etl",
@@ -17,7 +17,14 @@ with DAG(
         image="weather_de-app:latest",  
         command="python weather_etl/extract.py",
         docker_url="unix://var/run/docker.sock",  # Ensure Airflow can communicate with Docker daemon
-        network_mode="bridge",
+        network_mode="weather_de_default",
+        mounts=[
+            Mount(
+                source="/home/bedo7/weather_de/data",  # absolute path on the host
+                target="/usr/local/app/data",          # path in container
+                type="bind",
+            ),
+        ],
         force_pull=False,
     )
 
@@ -26,7 +33,14 @@ with DAG(
         image="weather_de-app:latest",
         command="python weather_etl/transform.py",
         docker_url="unix://var/run/docker.sock",
-        network_mode="bridge",
+        mounts=[
+            Mount(
+                source="/home/bedo7/weather_de/data",  # absolute path on the host
+                target="/usr/local/app/data",          # path in container
+                type="bind",
+            ),
+        ],
+        network_mode="weather_de_default",
     )
 
     load_task = DockerOperator(
@@ -34,7 +48,7 @@ with DAG(
         image="weather_de-app:latest",
         command="python weather_etl/load.py",
         docker_url="unix://var/run/docker.sock",
-        network_mode="bridge",
+        network_mode="weather_de_default",
     )
 
     extract_task >> transform_task >> load_task

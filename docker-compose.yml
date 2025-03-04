@@ -6,7 +6,7 @@ x-airflow-common:
     &airflow-common-env 
     AIRFLOW__CORE__EXECUTOR: LocalExecutor 
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow 
-    AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
+    AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true' 
     AIRFLOW__CORE__LOAD_EXAMPLES: 'False' 
     AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS: 'false'
@@ -18,7 +18,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs 
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config 
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins 
-    - ${AIRFLOW_PROJ_DIR:-.}/configuration.conf:/usr/local/app/configuration.conf
+    
     
   user: "${AIRFLOW_UID:-50000}:0" 
   depends_on: 
@@ -58,16 +58,13 @@ services:
       <<: *airflow-common-depends-on 
       airflow-init: 
         condition: service_completed_successfully 
-    environment:
-      - DATA_DIR=${DATA_DIR}
-      - CONFIG_PATH=${CONFIG_PATH}
     volumes: 
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
       - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
       - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-      - ./weather_etl:/opt/airflow/weather_etl
       - /var/run/docker.sock:/var/run/docker.sock 
+      - ${AIRFLOW_PROJ_DIR:-.}/configuration.conf:/usr/local/app/configuration.conf
     
     group_add:
       - ${DOCKER_GID}
@@ -87,15 +84,11 @@ services:
       airflow-init: 
         condition: service_completed_successfully
     # UPDATED: Added the same volumes as airflow-webserver 
-    environment:
-      - DATA_DIR=${DATA_DIR}
-      - CONFIG_PATH=${CONFIG_PATH}
     volumes: 
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
       - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
       - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-      - ./weather_etl:/opt/airflow/weather_etl
       - /var/run/docker.sock:/var/run/docker.sock 
     
     group_add:
@@ -188,6 +181,5 @@ services:
       - ./data:/usr/local/app/data
       - ./configuration.conf:/usr/local/app/configuration.conf
 
- 
 volumes: 
   postgres-db-volume:

@@ -40,8 +40,13 @@ def main():
               # Save the data as a csv. 
               csv_data = StringIO(response.text)
               df = pd.read_csv(csv_data)
-              data_path = f"{data_dir}/weather.csv"
-              df.to_csv(data_path, mode='a', index=False, header=False)
+              data_path = Path(f"{data_dir}/weather.csv")
+              if data_path.exists() and data_path.stat().st_size > 0:
+                     df.to_csv(data_path, mode='a', index=False, header=False)
+              else:
+                     df.to_csv(data_path, index=False, header=True)
+
+
        else:
               logger.exception(f"{response.raise_for_status()}")
               

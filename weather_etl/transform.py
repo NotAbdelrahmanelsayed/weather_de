@@ -2,10 +2,12 @@ import pandas as pd
 from configparser import ConfigParser
 import os 
 from weather_etl.utils import read_config
-from weather_etl.logs import logger
+from weather_etl.logging_config import setup_logging
 
 def main():
     # Read the configuration
+    logger = setup_logging()
+    
     logger.info("Reading the configuration file")
     parser = ConfigParser()
     read_config(parser)

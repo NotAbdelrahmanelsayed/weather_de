@@ -4,10 +4,10 @@ from io import StringIO
 from configparser import ConfigParser
 from pathlib import Path
 from weather_etl.utils import read_config
-from weather_etl.logs import logger
-import os
+from weather_etl.logging_config import setup_logging
 
 def main():
+       logger = setup_logging()
        # Read the configuration
        parser = ConfigParser()
        read_config(parser)

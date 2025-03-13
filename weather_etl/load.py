@@ -5,9 +5,10 @@ from configparser import ConfigParser
 import datetime
 import os
 from weather_etl.utils import read_config
-from weather_etl.logs import logger
+from weather_etl.logging_config import setup_logging
 
 def main():
+    logger = setup_logging()
     # Load configuration file
     logger.info("Reading the configuration file")
     parser = ConfigParser()

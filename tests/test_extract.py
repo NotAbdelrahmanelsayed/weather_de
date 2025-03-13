@@ -5,21 +5,6 @@ from pathlib import Path
 import pytest
 import shutil
 
-@pytest.fixture(scope="session")
-def temp_data_dir():
-    """Fixture to use a fixed absolute directory for testing."""
-    fixed_dir = Path("tests/data")
-    print(f"🔍 Using fixed test directory: {fixed_dir}")
-
-    # Ensure the directory is clean before running tests
-    if fixed_dir.exists():
-        shutil.rmtree(fixed_dir)  
-    fixed_dir.mkdir(parents=True, exist_ok=True)  
-
-    yield fixed_dir  
-
-    shutil.rmtree(fixed_dir, ignore_errors=True)
-
 @patch("requests.get")
 def test_valid_request(mock_get, temp_data_dir, monkeypatch):
     """Test if the extract function correctly fetches and saves data."""

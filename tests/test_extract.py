@@ -1,9 +1,6 @@
 from unittest.mock import patch, Mock
-import os
 from weather_etl.extract import main
-from pathlib import Path
-import pytest
-import shutil
+
 
 @patch("requests.get")
 def test_valid_request(mock_get, temp_data_dir, monkeypatch):

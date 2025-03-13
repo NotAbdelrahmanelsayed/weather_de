@@ -82,7 +82,7 @@ def main():
     # Save the transformed data
     transformed_path = os.path.join(data_dir, "weather_transformed.csv")
     try:
-        df.to_csv(transformed_path, index=False)
+        df.to_csv(transformed_path, index=True)
         logger.info(f"Transformed data successfull saved in {transformed_path}.")
     except Exception as e:
         logger.info(f"Failed to save the transformed data to {transformed_path} | {e}.")

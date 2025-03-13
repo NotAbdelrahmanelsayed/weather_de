@@ -1,22 +1,33 @@
 from unittest.mock import patch, Mock
 import os
-import unittest
 from weather_etl.extract import main
-from weather_etl.utils import read_config
 from configparser import ConfigParser
 from pathlib import Path
 import pytest
+import shutil
 
-@pytest.fixture
-def temp_data_dir(tmpdir):
+@pytest.fixture(scope="session") # Keep data for all tests in the session
+def temp_data_dir(tmp_path_factory):
     "Fixture to create a temporary data dir for testing"
-    return tmpdir.mkdir("test_data")
+    print("Creating the folder")
+    folder = Path(tmp_path_factory.mktemp("test_data"))
+    yield folder
+    print("removing the temp folder")
+    shutil.rmtree(folder, ignore_errors=True)
 
 @patch("requests.get")
 def test_valid_request(mock_get, temp_data_dir):
     """Test if the extract function correctly fetches and saves data."""
-    data_dir = Path(temp_data_dir)
-    test_file_path = data_dir / "weather.csv"
+    test_config_path = "tests/test_config.conf"
+    parser = ConfigParser()
+    parser.read(test_config_path)
+    parser.set("data_dir", "path", str(temp_data_dir))
+
+    # Write the temp
+    with open(test_config_path, "w") as configfile:
+        parser.write(configfile)
+
+    test_file_path = temp_data_dir / "weather.csv"
 
     mock_response = Mock()
     mock_response.status_code = 200

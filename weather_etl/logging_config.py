@@ -1,7 +1,6 @@
 import os
 import sys
 import logging
-import yaml
 from pathlib import Path
 from weather_etl.utils import read_config
 from configparser import ConfigParser
